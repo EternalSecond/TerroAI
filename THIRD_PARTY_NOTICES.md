@@ -19,4 +19,4 @@
 
 ## Код і матеріали TerroAI
 
-Ліцензію на код, синтетичні приклади та скріншоти TerroAI ще не обрано. Apache 2.0 моделі не надає прав на ці файли. Перед публікацією власник має підтвердити бажані умови та додати відповідний `LICENSE`, якщо хоче дозволити повторне використання. Див. [документацію GitHub про ліцензування](https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/licensing-a-repository).
+Код, синтетичні приклади та скріншоти TerroAI поширюються за [ліцензією MIT](LICENSE). Ліцензії моделі та її залежностей наведено вище.

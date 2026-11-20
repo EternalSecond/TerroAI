@@ -53,4 +53,4 @@ $env:QWEN_OFFLINE = "1"
 
 ## Ліцензії
 
-[Qwen3-8B поширюється за Apache 2.0](https://huggingface.co/Qwen/Qwen3-8B/blob/b968826d9c46dd6066d109eabc6255188de91218/LICENSE). Це ліцензія моделі. Ліцензію коду й матеріалів TerroAI має окремо обрати власник перед публікацією. Відомості про залежності й межі релізу наведено у [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
+Код, демонстраційні приклади та скріншоти TerroAI поширюються за [ліцензією MIT](LICENSE). [Базова модель Qwen3-8B має окрему ліцензію Apache 2.0](https://huggingface.co/Qwen/Qwen3-8B/blob/b968826d9c46dd6066d109eabc6255188de91218/LICENSE). Відомості про залежності наведено у [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).

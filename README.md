@@ -1,56 +1,56 @@
 # TerroAI v0.1
 
-TerroAI — локальний асистент із двома робочими просторами. **TerroMind** призначений для розмов. **TerroCreate** має окрему історію, редактор коду та вкладення. Обидва режими використовують базову модель [Qwen/Qwen3-8B](https://huggingface.co/Qwen/Qwen3-8B) у 4-бітному режимі NF4.
+TerroAI is a local AI assistant for Windows. **TerroMind** is for general chat. **TerroCreate** has a separate history, a code editor, and file attachments. Both use [Qwen/Qwen3-8B](https://huggingface.co/Qwen/Qwen3-8B) with 4-bit NF4 quantization. The interface is in Ukrainian.
 
-![TerroMind із демонстраційною розмовою](docs/screenshots/terromind.png)
+![TerroMind demo conversation](docs/screenshots/terromind.png)
 
-![TerroCreate з демонстраційним Python-файлом і редактором](docs/screenshots/terrocreate.png)
+![TerroCreate with a demo Python attachment and code editor](docs/screenshots/terrocreate.png)
 
-## Встановлення на Windows
+## Install on Windows
 
-Потрібні Windows x64, Python 3.12 x64 із Windows Python Launcher, GPU NVIDIA з драйвером для CUDA 12.8 і близько 25 ГБ вільного місця для залежностей і моделі. Перевірений запуск використовував RTX 3060 Ti з 8 ГіБ VRAM. На доступну пам’ять впливають інші програми та довжина запиту. Команди виконуйте в PowerShell із кореня репозиторію.
+Use Windows x64, Python 3.12 x64 with the Windows Python Launcher, an NVIDIA GPU with a driver compatible with CUDA 12.8, and about 25 GB of free disk space. TerroAI was tested on an RTX 3060 Ti with 8 GiB of VRAM. Available GPU memory depends on other running applications and prompt length. Run these commands in PowerShell from the repository root.
 
-```powershell
+~~~powershell
 py -3.12 -m venv .venv
 .\.venv\Scripts\python.exe -m pip install --upgrade pip
 .\.venv\Scripts\python.exe -m pip install "torch==2.8.0+cu128" --index-url https://download.pytorch.org/whl/cu128
 .\.venv\Scripts\python.exe -m pip install -r requirements.txt
 .\.venv\Scripts\python.exe -m pip check
 .\.venv\Scripts\python.exe -c "import torch; print(torch.__version__, torch.cuda.is_available())"
-```
+~~~
 
-Остання команда має показати `2.8.0+cu128 True`. Якщо показує `False`, перевірте драйвер і доступність GPU за допомогою `nvidia-smi`. Пакет CUDA встановлюється з [офіційного індексу PyTorch](https://pytorch.org/get-started/previous-versions/).
+The last command should print `2.8.0+cu128 True`. If it prints `False`, use `nvidia-smi` to check the driver and GPU. The CUDA wheel comes from the [official PyTorch index](https://pytorch.org/get-started/previous-versions/).
 
-## Завантаження й запуск
+## Download and run
 
-```powershell
+~~~powershell
 .\.venv\Scripts\python.exe config.py --download
 $env:QWEN_OFFLINE = "1"
 .\.venv\Scripts\python.exe api_server.py --with-ui
-```
+~~~
 
-Відкрийте [http://127.0.0.1:8001/ui/](http://127.0.0.1:8001/ui/). Перший запит завантажує модель на GPU і може тривати довше. Сервер слухає лише `127.0.0.1`. Він не має автентифікації, тож залишайте його доступним лише локально. Якщо потрібен сумісний з OpenAI локальний API, його базова адреса — `http://127.0.0.1:8001/v1`.
+Open [http://127.0.0.1:8001/ui/](http://127.0.0.1:8001/ui/). The first request loads the model onto the GPU and can take longer. The server binds to `127.0.0.1` and has no authentication, so keep it local. The OpenAI-compatible API base URL is `http://127.0.0.1:8001/v1`.
 
-Якщо порт 8001 зайнятий, запустіть сервер на іншому порту. Для прикладу нижче відкрийте [http://127.0.0.1:8012/ui/](http://127.0.0.1:8012/ui/).
+If port 8001 is already in use, choose another port. For the example below, open [http://127.0.0.1:8012/ui/](http://127.0.0.1:8012/ui/).
 
-```powershell
+~~~powershell
 .\.venv\Scripts\python.exe api_server.py --with-ui --port 8012
-```
+~~~
 
-Якщо інший процес уже завантажив Qwen на ту саму GPU, перед запуском нової генерації звільніть достатньо VRAM. Зміна порту не звільняє пам’ять моделі.
+If another process already has Qwen loaded on the same GPU, free enough VRAM before starting generation. A different port does not free GPU memory.
 
-Ваги й токенізатор завантажуються окремо в `.runtime/hub`. У новому PowerShell знову виконайте `$env:QWEN_OFFLINE = "1"`, щоб працювати з кешем. Для нового завантаження спочатку виконайте `Remove-Item Env:QWEN_OFFLINE -ErrorAction SilentlyContinue`. Можна вказати інший локальний каталог кешу через `QWEN_RUNTIME_DIR`. Для повторення перевірки з тією самою ревізією Qwen задайте `$env:QWEN_REVISION = "b968826d9c46dd6066d109eabc6255188de91218"` перед завантаженням та запуском.
+Model weights and the tokenizer download separately into `.runtime/hub`. Set `$env:QWEN_OFFLINE = "1"` again in each new PowerShell session to use the cache. Before a new download, clear it with `Remove-Item Env:QWEN_OFFLINE -ErrorAction SilentlyContinue`. Use `QWEN_RUNTIME_DIR` to choose a different local cache directory. To reproduce the tested model revision, set `$env:QWEN_REVISION = "b968826d9c46dd6066d109eabc6255188de91218"` before downloading and running the model.
 
-## Спробуйте
+## Try it
 
-1. У **TerroMind** запитайте, чому Місяць має фази.
-2. У **TerroCreate** перетягніть [temperature.py](examples/temperature.py) у чат або поле вводу. Можна також скористатися кнопкою **+**. Попросіть додати типи й короткий docstring до функції з файла.
-3. Натисніть **Надіслати**, а після відповіді — **Копіювати** в її блоці коду.
+1. In **TerroMind**, ask why the Moon has phases.
+2. In **TerroCreate**, drop [temperature.py](examples/temperature.py) into the chat or input field, or select it with **+**. Ask TerroCreate to add type hints and a short docstring.
+3. Send the message with **Надіслати**, then use **Копіювати** to copy the code block.
 
-Фото PNG, JPEG і BMP обробляються локально через Windows OCR. Потрібен встановлений мовний компонент розпізнавання. Qwen отримує розпізнаний текст, а не пікселі зображення. Історія та чернетки зберігаються в локальному сховищі браузера. Типовий запуск не потребує облікового запису чи API-ключа.
+PNG, JPEG, and BMP photos are processed locally by Windows OCR, which requires an installed OCR language component. Qwen receives the recognized text rather than the image pixels. Chat history and drafts are stored in the browser's local storage. The standard setup requires no account or API key.
 
-За бажанням `dataset_manager.py seed` додає п’ять синтетичних задач до локального датасету, а `train_lora.py` запускає локальне донавчання. Повні параметри доступні через `--help`. Датасети, ваги, адаптери, журнали й локальна історія не входять до релізу.
+Optionally, run `dataset_manager.py seed` to add five synthetic examples to a local dataset. Run `train_lora.py` for local fine-tuning. Both commands have a `--help` option. The release excludes local datasets, model weights, adapters, logs, and chat history.
 
-## Ліцензії
+## License
 
-Код, демонстраційні приклади та скріншоти TerroAI поширюються за [ліцензією MIT](LICENSE). [Базова модель Qwen3-8B має окрему ліцензію Apache 2.0](https://huggingface.co/Qwen/Qwen3-8B/blob/b968826d9c46dd6066d109eabc6255188de91218/LICENSE). Відомості про залежності наведено у [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
+TerroAI code, demo examples, and screenshots are available under the [MIT License](LICENSE). The [Qwen3-8B base model uses Apache 2.0](https://huggingface.co/Qwen/Qwen3-8B/blob/b968826d9c46dd6066d109eabc6255188de91218/LICENSE). See [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) for dependency licenses.

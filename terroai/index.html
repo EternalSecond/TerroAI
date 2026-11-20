@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="uk">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; connect-src 'self'; img-src 'self' data:; object-src 'none'; base-uri 'none'; form-action 'self'">
+  <title>TerroAI</title>
+  <link rel="stylesheet" href="style.css">
+  <script type="module" src="app.js"></script>
+</head>
+<body>
+  <header class="top">
+    <div class="brand-group">
+      <button type="button" id="sidebar-toggle" aria-label="Бічна панель" aria-controls="sidebar" aria-expanded="true">☰</button>
+      <span class="wordmark"><span class="mark" aria-hidden="true">T</span> TerroAI</span>
+    </div>
+    <nav id="mode-menu" aria-label="Робочі простори">
+      <button type="button" data-mode="chat"><span aria-hidden="true">✦</span> TerroMind</button>
+      <button type="button" data-mode="code"><span aria-hidden="true">‹/›</span> TerroCreate</button>
+    </nav>
+  </header>
+  <div class="shell">
+    <aside id="sidebar" aria-label="Історія">
+      <button type="button" id="reset">Новий чат</button>
+      <h2 id="history-label">Чати</h2>
+      <ul id="history"></ul>
+      <button type="button" id="profile" aria-haspopup="dialog">
+        <span id="profile-avatar" class="avatar" aria-hidden="true"></span>
+        <span class="profile-label"><strong id="profile-name"></strong><small>Налаштування</small></span>
+        <span aria-hidden="true">⚙</span>
+      </button>
+    </aside>
+    <button type="button" id="sidebar-backdrop" aria-label="Закрити бічну панель" hidden></button>
+    <main id="workspace">
+    <section class="conversation" aria-label="Розмова">
+      <div id="drop-hint" class="drop-hint" hidden><span>Відпустіть, щоб прикріпити</span></div>
+      <div id="scroll" class="scroll" tabindex="0" aria-label="Історія повідомлень">
+        <div id="timeline" class="timeline"></div>
+      </div>
+      <form id="composer" class="composer">
+        <ul id="attachments" aria-label="Вкладення"></ul>
+        <label for="draft" class="sr-only">Повідомлення</label>
+        <textarea id="draft" rows="2" placeholder="Напишіть повідомлення…" enterkeyhint="send"></textarea>
+        <div class="composer-actions">
+          <details id="add-menu" class="popover">
+            <summary aria-label="Додати вкладення">+</summary>
+            <div class="popover-panel">
+              <button type="button" id="choose-file">Прикріпити файл</button>
+              <button type="button" id="choose-photo">Прикріпити фото</button>
+            </div>
+          </details>
+          <input id="file" type="file" accept="text/*,.py,.js,.ts,.json,.md,.html,.css,.sql,.yaml,.yml,.csv,.sh,.ps1,.toml" multiple hidden>
+          <input id="photo" type="file" accept="image/png,image/jpeg,image/bmp,.png,.jpg,.jpeg,.bmp" multiple hidden>
+          <button class="code-only" type="button" id="editor-toggle" aria-controls="workbench" aria-expanded="false" hidden>Відкрити редактор</button>
+          <details id="effort-menu" class="popover">
+            <summary>Зусилля <span id="effort-label" aria-hidden="true"></span></summary>
+            <fieldset class="popover-panel">
+              <legend class="sr-only">Зусилля</legend>
+              <label><input type="radio" name="effort" value="low"> <span>Низьке<small>Швидка відповідь</small></span></label>
+              <label><input type="radio" name="effort" value="medium"> <span>Середнє<small>Більше місця для деталей</small></span></label>
+              <label><input type="radio" name="effort" value="high"> <span>Вмикає розмірковування в сумісних моделях. Відповідь може тривати довше.</small></span></label>
+            </fieldset>
+          </details>
+          <button type="button" id="stop" hidden>Зупинити</button>
+          <button id="send" class="primary" type="submit">Надіслати <span aria-hidden="true">↑</span></button>
+        </div>
+        <p id="notice" role="status"></p>
+        <p id="storage-notice" role="status" hidden>Браузер не зміг зберегти останні зміни.</p>
+      </form>
+    </section>
+    <aside id="workbench" hidden>
+        <div class="editor-heading"><h2>Редактор</h2><button id="close-editor" type="button">Згорнути</button></div>
+        <div class="editor-body">
+          <label for="source">Початковий код</label>
+          <textarea id="source" spellcheck="false" rows="6" placeholder="Вставте код або відкрийте файл…"></textarea>
+          <label class="option"><input id="adapter" type="checkbox"> LoRA</label>
+          <label for="solution">Рішення</label>
+          <textarea id="solution" spellcheck="false" rows="9" placeholder="Тут можна відредагувати останню відповідь."></textarea>
+          <button type="button" id="save" disabled>Зберегти в датасет</button>
+          <p id="save-status" role="status"></p>
+        </div>
+    </aside>
+  </main>
+  </div>
+  <dialog id="settings" aria-labelledby="settings-title">
+    <form id="profile-form">
+      <div class="editor-heading">
+        <h2 id="settings-title">Налаштування</h2>
+        <button id="close-settings" type="button" aria-label="Закрити налаштування">×</button>
+      </div>
+      <label for="display-name">Ім’я</label>
+      <input id="display-name" type="text" maxlength="40" autocomplete="off">
+      <div class="avatar-settings">
+        <span id="avatar-preview" class="avatar" aria-hidden="true"></span>
+        <button id="choose-avatar" type="button">Змінити аватар</button>
+        <button id="clear-avatar" type="button" hidden>Видалити</button>
+        <input id="avatar-file" type="file" accept="image/png,image/jpeg,image/webp,.png,.jpg,.jpeg,.webp" hidden>
+      </div>
+      <p id="profile-status" role="status"></p>
+      <section class="model-settings" aria-labelledby="model-heading">
+        <h3 id="model-heading">Модель</h3>
+        <p id="model">Завантажую інформацію…</p>
+      </section>
+      <button id="profile-submit" class="primary" type="submit">Зберегти</button>
+    </form>
+  </dialog>
+</body>
+</html>
